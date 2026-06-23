@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="42091e90-fff1-421e-a210-2c1016275a97" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/chinese_UAV.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="42091e90-fff1-421e-a210-2c1016275a97" name="Changes" comment="проектик для упрощеня полиномов, которыыми описан самолет из используемой статьи для проверки работоспособности СУ" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -50,6 +43,19 @@
       <option name="presentableId" value="Default" />
       <updated>1782189982902</updated>
     </task>
+    <task id="LOCAL-00001" summary="проектик для упрощеня полиномов, которыыми описан самолет из используемой статьи для проверки работоспособности СУ">
+      <option name="closed" value="true" />
+      <created>1782192121257</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1782192121257</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="проектик для упрощеня полиномов, которыыми описан самолет из используемой статьи для проверки работоспособности СУ" />
+    <option name="LAST_COMMIT_MESSAGE" value="проектик для упрощеня полиномов, которыыми описан самолет из используемой статьи для проверки работоспособности СУ" />
   </component>
 </project>
