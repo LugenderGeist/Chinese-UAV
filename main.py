@@ -91,6 +91,65 @@ def compute_r2_for_model(original_expr, terms_to_exclude=None, test_points=None)
         return 0.0
 
 
+def analyze_each_term(name, expr, test_points=None):
+    """
+    Анализирует влияние каждого члена на R²
+    Возвращает таблицу с потерями в процентах
+    """
+    if test_points is None:
+        test_points = generate_test_points(1000)
+
+    terms = get_terms(expr)
+    n_terms = len(terms)
+
+    # R² полной модели
+    r2_full = compute_r2_for_model(expr, test_points=test_points)
+
+    print(f"\n{'=' * 70}")
+    print(f"АНАЛИЗ ЧЛЕНОВ ПОЛИНОМА: {name}")
+    print(f"{'=' * 70}")
+    print(f"R² полной модели: {r2_full:.8f} (100%)")
+    print(f"\n{'Индекс':^6} {'Потеря R² (%)':^15} {'Член'}")
+    print("-" * 70)
+
+    results = []
+    for i, term in enumerate(terms):
+        r2_without = compute_r2_for_model(expr, terms_to_exclude=[i], test_points=test_points)
+
+        # Потеря в процентах от R² полной модели
+        if r2_full != 0:
+            loss_percent = (r2_full - r2_without) / r2_full * 100
+        else:
+            loss_percent = 0
+
+        term_str = str(term)
+        if len(term_str) > 50:
+            term_str = term_str[:47] + "..."
+
+        results.append({
+            'индекс': i,
+            'член': term,
+            'R2_без_члена': r2_without,
+            'потеря_R2_абс': r2_full - r2_without,
+            'потеря_R2_%': loss_percent
+        })
+
+        # Цветовое выделение для важных членов
+        if loss_percent > 10:
+            marker = "⚠️ ВАЖНЫЙ!"
+        elif loss_percent > 1:
+            marker = "🔸"
+        else:
+            marker = "  "
+
+        print(f"{i:^6} {loss_percent:>14.4f}% {marker} {term_str}")
+
+    # Сортируем по важности
+    results_sorted = sorted(results, key=lambda x: x['потеря_R2_%'], reverse=True)
+
+    return results
+
+
 def simplify_polynomial(expr, test_points=None, target_r2=0.95):
     """
     Упрощает полином, удаляя наименее важные члены,
@@ -99,48 +158,40 @@ def simplify_polynomial(expr, test_points=None, target_r2=0.95):
     if test_points is None:
         test_points = generate_test_points(1000)
 
-    # Получаем все члены
     all_terms = get_terms(expr)
     n_terms = len(all_terms)
 
     if n_terms <= 1:
         return expr, [], 1.0
 
-    # Вычисляем важность каждого члена
     r2_full = compute_r2_for_model(expr, test_points=test_points)
 
-    # Сортируем члены по важности (от наименее важных к наиболее)
+    # Вычисляем потерю R² для каждого члена (в процентах)
     importance = []
     for i in range(n_terms):
         r2_without = compute_r2_for_model(expr, terms_to_exclude=[i], test_points=test_points)
-        delta = r2_full - r2_without
-        importance.append((i, delta, all_terms[i]))
+        loss_percent = (r2_full - r2_without) / r2_full * 100 if r2_full != 0 else 0
+        importance.append((i, loss_percent, all_terms[i]))
 
-    # Сортируем по возрастанию важности (наименее важные сначала)
+    # Сортируем по возрастанию потери (наименее важные сначала)
     importance_sorted = sorted(importance, key=lambda x: x[1])
 
     # Пробуем удалять наименее важные члены
     terms_to_remove = []
     current_r2 = r2_full
 
-    for i, delta, term in importance_sorted:
-        # Пробуем удалить этот член
+    for i, loss_percent, term in importance_sorted:
         test_remove = terms_to_remove + [i]
         new_r2 = compute_r2_for_model(expr, terms_to_exclude=test_remove, test_points=test_points)
 
-        # Если R² все еще выше порога, удаляем член
         if new_r2 >= target_r2:
             terms_to_remove.append(i)
             current_r2 = new_r2
         else:
-            # Если удаление ухудшает R² ниже порога, останавливаемся
             break
 
-    # Создаем упрощенное выражение
     remaining_terms = [term for idx, term in enumerate(all_terms) if idx not in terms_to_remove]
     simplified_expr = sum(remaining_terms) if remaining_terms else sp.Integer(0)
-
-    # Сортируем индексы удаленных членов для красивого вывода
     terms_to_remove.sort()
 
     return simplified_expr, terms_to_remove, current_r2
@@ -148,10 +199,10 @@ def simplify_polynomial(expr, test_points=None, target_r2=0.95):
 
 def analyze_polynomial(name, expr, test_points=None):
     """
-    Анализирует полином и упрощает его
+    Полный анализ полинома
     """
     print(f"\n{'=' * 70}")
-    print(f"Анализ полинома: {name}")
+    print(f"АНАЛИЗ ПОЛИНОМА: {name}")
     print(f"{'=' * 70}")
 
     terms = get_terms(expr)
@@ -160,48 +211,44 @@ def analyze_polynomial(name, expr, test_points=None):
     if test_points is None:
         test_points = generate_test_points(1000)
 
-    # Вычисляем R² для полной модели
+    # 1. Анализ каждого члена
+    term_analysis = analyze_each_term(name, expr, test_points)
+
+    # 2. R² полной модели
     r2_full = compute_r2_for_model(expr, test_points=test_points)
-    print(f"\nИсходный полином:")
-    print(f"  Количество членов: {n_terms}")
-    print(f"  R² полной модели: {r2_full:.8f}")
 
-    # Показываем все члены
-    print(f"\nВсе члены полинома:")
-    for i, term in enumerate(terms):
-        term_str = str(term)
-        if len(term_str) > 60:
-            term_str = term_str[:57] + "..."
-        print(f"  {i}: {term_str}")
-
-    # Упрощаем полином с разными порогами
+    # 3. Упрощение
     print(f"\n{'=' * 70}")
-    print("Упрощение полинома (целевой R² = 95%):")
+    print("УПРОЩЕНИЕ ПОЛИНОМА (целевой R² = 95% от исходного):")
     print(f"{'=' * 70}")
 
     simplified_expr, removed_indices, r2_simplified = simplify_polynomial(
         expr, test_points, target_r2=0.95
     )
 
-    # Показываем результат
     removed_terms = [terms[i] for i in removed_indices]
     remaining_terms = [terms[i] for i in range(n_terms) if i not in removed_indices]
 
-    print(f"\nУДАЛЕННЫЕ члены ({len(removed_indices)} шт.):")
-    for i, idx in enumerate(removed_indices):
-        print(f"  {i + 1}. {terms[idx]}")
+    if removed_indices:
+        print(f"\n✅ УДАЛЕНЫ члены ({len(removed_indices)} шт.):")
+        for i, idx in enumerate(removed_indices):
+            loss = next(r['потеря_R2_%'] for r in term_analysis if r['индекс'] == idx)
+            print(f"  {i + 1}. {terms[idx]} (потеря R²: {loss:.4f}%)")
+    else:
+        print("\nℹ️ Ни один член не был удален (все важны для сохранения 95% точности)")
 
-    print(f"\nОСТАВШИЕСЯ члены ({len(remaining_terms)} шт.):")
+    print(f"\n✅ ОСТАВШИЕСЯ члены ({len(remaining_terms)} шт.):")
     for i, term in enumerate(remaining_terms):
         print(f"  {i + 1}. {term}")
 
-    print(f"\nРезультат упрощения:")
-    print(f"  R² упрощенной модели: {r2_simplified:.8f}")
-    print(f"  Потеря точности: {(r2_full - r2_simplified):.8f} ({(1 - r2_simplified / r2_full) * 100:.2f}%)")
+    print(f"\n📊 РЕЗУЛЬТАТЫ:")
+    print(f"  R² полной модели:  {r2_full:.8f} (100%)")
+    print(f"  R² упрощенной:     {r2_simplified:.8f} ({r2_simplified / r2_full * 100:.2f}% от исходного)")
+    print(f"  Потеря точности:   {(r2_full - r2_simplified):.8f} ({(1 - r2_simplified / r2_full) * 100:.2f}%)")
     print(
-        f"  Сокращение членов: {n_terms} → {len(remaining_terms)} ({-((n_terms - len(remaining_terms)) / n_terms * 100):.1f}%)")
+        f"  Сокращение:        {n_terms} → {len(remaining_terms)} членов (-{((n_terms - len(remaining_terms)) / n_terms * 100):.1f}%)")
 
-    print(f"\nУпрощенный полином:")
+    print(f"\n📝 Упрощенный полином:")
     print(f"  {name}_simplified = {simplified_expr}")
 
     return {
@@ -214,7 +261,8 @@ def analyze_polynomial(name, expr, test_points=None):
         'r2_full': r2_full,
         'r2_simplified': r2_simplified,
         'n_terms_original': n_terms,
-        'n_terms_simplified': len(remaining_terms)
+        'n_terms_simplified': len(remaining_terms),
+        'term_analysis': term_analysis
     }
 
 
@@ -236,7 +284,7 @@ def main():
     for name, expr in polynomials.items():
         all_results[name] = analyze_polynomial(name, expr, test_points)
 
-    # Выводим сводную таблицу всех упрощенных полиномов
+    # Выводим сводную таблицу
     print(f"\n{'=' * 70}")
     print("СВОДНАЯ ТАБЛИЦА УПРОЩЕННЫХ ПОЛИНОМОВ")
     print(f"{'=' * 70}")
@@ -250,11 +298,11 @@ def main():
             'Удалено_членов': result['n_terms_original'] - result['n_terms_simplified'],
             'R²_полный': result['r2_full'],
             'R²_упрощенный': result['r2_simplified'],
-            'Потеря_R²': result['r2_full'] - result['r2_simplified']
+            'Потеря_R²_%': (1 - result['r2_simplified'] / result['r2_full']) * 100 if result['r2_full'] != 0 else 0
         })
 
     df = pd.DataFrame(summary_data)
-    print(df.to_string(index=False))
+    print(df.to_string(index=False, float_format='%.6f'))
 
     # Сохраняем результаты в CSV
     df.to_csv('polynomial_simplification_summary.csv', index=False, encoding='utf-8-sig')
@@ -265,17 +313,18 @@ def main():
     print(f"{'=' * 70}")
 
     with open('simplified_polynomials.txt', 'w', encoding='utf-8') as f:
-        f.write("УПРОЩЕННЫЕ ПОЛИНОМЫ (R² >= 95%)\n")
+        f.write("УПРОЩЕННЫЕ ПОЛИНОМЫ (R² >= 95% от исходного)\n")
         f.write("=" * 70 + "\n\n")
 
         for name, result in all_results.items():
             print(f"\n{name}_simplified = {result['simplified']}")
             f.write(f"{name}_simplified = {result['simplified']}\n")
             f.write(f"  R² = {result['r2_simplified']:.8f} (было {result['r2_full']:.8f})\n")
+            f.write(f"  Потеря точности: {(1 - result['r2_simplified'] / result['r2_full']) * 100:.2f}%\n")
             f.write(
                 f"  Удалено членов: {result['n_terms_original'] - result['n_terms_simplified']} из {result['n_terms_original']}\n\n")
 
-    print(f"\nРезультаты сохранены в файлы:")
+    print(f"\n✅ Результаты сохранены в файлы:")
     print(f"  - 'simplified_polynomials.txt' - все упрощенные полиномы")
     print(f"  - 'polynomial_simplification_summary.csv' - сводная таблица")
 

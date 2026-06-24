@@ -1,18 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="42091e90-fff1-421e-a210-2c1016275a97" name="Changes" comment="проектик для упрощеня полиномов, которыыми описан самолет из используемой статьи для проверки работоспособности СУ" />
+    <list default="true" id="42091e90-fff1-421e-a210-2c1016275a97" name="Changes" comment="проектик для упрощеня полиномов, которыыми описан самолет из используемой статьи для проверки работоспособности СУ">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/polynomial_analysis_results.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/polynomial_simplification_summary.csv" beforeDir="false" afterPath="$PROJECT_DIR$/polynomial_simplification_summary.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simplified_polynomials.txt" beforeDir="false" afterPath="$PROJECT_DIR$/simplified_polynomials.txt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 2
-}]]></component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;LugenderGeist&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/LugenderGeist/Chinese_UAV&quot;,
+    &quot;accountId&quot;: &quot;04a5b294-d437-4474-9379-8b5d50037354&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
   <component name="ProjectId" id="3FWTmKie8AnVZPQKw5VL8M5Jkzv" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -22,6 +47,7 @@
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "Python.main.executor": "Run",
+    "Python.removing.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -51,7 +77,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782192121257</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="проектик для упрощеня полиномов, которыыми описан самолет из используемой статьи для проверки работоспособности СУ">
+      <option name="closed" value="true" />
+      <created>1782192169389</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1782192169389</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
